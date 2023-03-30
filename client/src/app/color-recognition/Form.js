@@ -1,7 +1,6 @@
 "use client";
 import Image from 'next/image';
 import React, { useState } from "react";
-import colors_gif from "./colors.gif";
 
 const MAX = 1_000_000;
 const USER_ID = "krloslao90";
@@ -41,7 +40,7 @@ const fetchOptions = (imgUrl) => {
 	return requestOptions;
 };
 
-function ImageRecognitionForm() {
+function Form() {
 	const [colors, setColors] = useState();
 	const [imageURL, setImageUrl] = useState(generateRandomImageUrl);
 
@@ -73,8 +72,7 @@ function ImageRecognitionForm() {
 	};
 
 	return (
-		<>
-			<Image src={colors_gif} alt="colors" style={{ borderRadius: "50%" }} />
+		<>			
 			<form onSubmit={handleSubmit}>
 				<input type="text" value={imageURL} onChange={(event) => setImageUrl(event.target.value)} />
 				<button type="submit">Submit</button>
@@ -99,4 +97,4 @@ function ImageRecognitionForm() {
 	);
 }
 
-export default ImageRecognitionForm;
+export default Form;
