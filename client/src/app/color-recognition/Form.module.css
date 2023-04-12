@@ -1,0 +1,30 @@
+.imageContainer {
+	margin: 3rem 0 2rem;
+	text-align: center;
+}
+
+.imageContainer img {
+	max-width: 100%;
+	height: auto;
+}
+
+.colorContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.color {
+	text-align: center;
+	margin: 1rem;
+	padding: 1rem;
+	border-radius: 0.25rem;
+	width: 200px;
+	border: 1px solid #ccc;
+}
+
+.color p {
+	text-shadow: 0 0 3px #ff0000, 0 0 5px #000000;
+}

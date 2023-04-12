@@ -1,14 +1,12 @@
-import React from 'react'
-import Form from './Form'
-import Link from 'next/link'
+import React from "react";
+import Form from "./Form";
 
 function Recognition() {
-  return (
-    <>
-        <Link href="/">Home</Link>
-        <Form />
-    </>
-  )
+	return (
+		<main>
+			<Form />
+		</main>
+	);
 }
 
-export default Recognition
+export default Recognition;

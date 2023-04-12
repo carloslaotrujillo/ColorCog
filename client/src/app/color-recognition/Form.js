@@ -1,6 +1,7 @@
 "use client";
-import Image from 'next/image';
+import Image from "next/image";
 import React, { useState } from "react";
+import style from "./Form.module.css";
 
 const MAX = 1_000_000;
 const USER_ID = "krloslao90";
@@ -10,6 +11,7 @@ const PAT = "3f8003a72aee4c9cb2c46af28832f94d";
 const baseImageUrl = "https://loremflickr.com/1200/630/landscape?lock=";
 
 const generateRandomImageUrl = () => baseImageUrl + Math.floor(Math.random() * MAX).toString();
+const invertHex = (hex) => (Number(`0x1${hex}`) ^ 0xffffff).toString(16).substr(1).toUpperCase();
 
 const fetchOptions = (imgUrl) => {
 	const raw = JSON.stringify({
@@ -72,21 +74,23 @@ function Form() {
 	};
 
 	return (
-		<>			
+		<>
 			<form onSubmit={handleSubmit}>
 				<input type="text" value={imageURL} onChange={(event) => setImageUrl(event.target.value)} />
 				<button type="submit">Submit</button>
 				<button onClick={(event) => randomPhoto(event)}>Random Photo</button>
 			</form>
-			<div>
+			<div className={style.imageContainer}>
 				{imageLoading && <p>Loading Image...</p>}
 				{imageURL && <Image src={imageURL} alt="Image" key={imageURL} onLoad={handleImageLoad} width={1200} height={630} />}
-
+			</div>
+			<div className={style.colorContainer}>
 				{colorsLoading && <p>Loading colors...</p>}
-				{(colors && !colorsLoading) &&
+				{colors &&
+					!colorsLoading &&
 					colors.map((color) => {
 						return (
-							<div key={color.raw_hex} style={{ backgroundColor: color.w3c.hex }}>
+							<div className={style.color} key={color.raw_hex} style={{ backgroundColor: color.w3c.hex }}>
 								<p>{color.w3c.name}</p>
 								<p>{color.w3c.hex}</p>
 							</div>
