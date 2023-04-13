@@ -63,7 +63,6 @@ function Form() {
 	};
 
 	const [uploadedImage, setUploadedImage] = useState([]);
-	const maxNumber = 1;
 	const onChange = (imageList, addUpdateIndex) => {
 		setImageLoading(true);
 		setUploadedImage(imageList);
@@ -83,30 +82,30 @@ function Form() {
 				/>
 				<button type="submit">Submit</button>
 				<button onClick={(event) => randomPhoto(event)}>Random Photo</button>
-				<ImageUploading
-					value={uploadedImage}
-					onChange={onChange}
-					maxNumber={maxNumber}
-					dataURLKey="data_url"
-					acceptType={["jpg", "png", "gif"]}
-				>
-					{({ imageList, onImageUpload, onImageUpdate, onImageRemove, isDragging, dragProps, errors }) => (
-						<div className="upload__image-wrapper">
-							<button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpload} {...dragProps}>
-								Click or Drop here
-							</button>
-							{errors && (
-								<div>
-									{errors.maxNumber && <span>Number of selected images exceed maxNumber</span>}
-									{errors.acceptType && <span>Your selected file type is not allow</span>}
-									{errors.maxFileSize && <span>Selected file size exceed maxFileSize</span>}
-									{errors.resolution && <span>Selected file is not match your desired resolution</span>}
-								</div>
-							)}
-						</div>
-					)}
-				</ImageUploading>
 			</form>
+			<ImageUploading
+				value={uploadedImage}
+				onChange={onChange}
+				maxNumber={1}
+				dataURLKey="data_url"
+				acceptType={["jpg", "png", "gif"]}
+			>
+				{({ imageList, onImageUpload, onImageUpdate, onImageRemove, isDragging, dragProps, errors }) => (
+					<div className="upload__image-wrapper">
+						<button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpload} {...dragProps}>
+							Click or Drop here
+						</button>
+						{errors && (
+							<div>
+								{errors.maxNumber && <span>Number of selected images exceed maxNumber</span>}
+								{errors.acceptType && <span>Your selected file type is not allow</span>}
+								{errors.maxFileSize && <span>Selected file size exceed maxFileSize</span>}
+								{errors.resolution && <span>Selected file is not match your desired resolution</span>}
+							</div>
+						)}
+					</div>
+				)}
+			</ImageUploading>
 
 			<div className={style.imageContainer}>
 				{imageLoading && (
