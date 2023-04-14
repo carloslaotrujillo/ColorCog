@@ -91,6 +91,7 @@ function Form() {
 			<ImageUploading
 				value={uploadedImage}
 				// Use the handleSubmit function to upload the image (WIP)
+				// On Drag gives error when a img is already uploaded by drag at first
 				onChange={onImageUploadChange}
 				maxNumber={UPLOAD_MAX_NUMBER}
 				dataURLKey="data_url"

@@ -1,5 +1,5 @@
 import "./globals.css";
-import Navbar from "./navbar/Navbar";
+import Navbar from "./components/navbar/Navbar";
 
 export const metadata = {
 	title: "Color Precog",

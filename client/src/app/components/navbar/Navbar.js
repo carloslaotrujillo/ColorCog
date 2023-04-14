@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import fav_colors from "../assets/fav_color.gif";
+import fav_colors from "../../assets/fav_color.gif";
 import style from "./Navbar.module.css";
 
 function Navbar() {
