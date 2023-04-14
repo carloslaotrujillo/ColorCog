@@ -1,32 +1,51 @@
 .imageContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 	margin: 3rem 0 2rem;
-	text-align: center;
 }
 
 .imageContainer img {
-	max-width: 100%;
+	width: 100vw;
 	height: auto;
-	max-width: 1200px;
-	max-height: 630px;
+	max-width: 960px;
 }
 
 .colorContainer {
+	width: 100%;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: row;
 	flex-wrap: wrap;
+	max-width: 960px;
+	align-items: center;
+	flex-direction: row;
+	justify-content: center;
 }
 
 .color {
-	text-align: center;
+	width: 15%;
 	margin: 1rem;
-	padding: 1rem;
+	padding: 0.5rem;
+	text-align: center;
 	border-radius: 0.25rem;
-	width: 200px;
 	border: 1px solid #ccc;
 }
 
 .color p {
 	text-shadow: 0 0 3px #ff0000, 0 0 5px #000000;
+}
+
+@media screen and (max-width: 992px) {
+	.color {
+		width: 30%;
+	}
+}
+@media screen and (max-width: 512px) {
+	.color {
+		width: 50%;
+	}
+
+	.imageContainer img {
+		width: auto;
+	}
 }

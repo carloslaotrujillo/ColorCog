@@ -5,74 +5,79 @@ import style from "./Form.module.css";
 import loader from "../assets/loader.gif";
 import ImageUploading from "react-images-uploading";
 
-import fetchClarifaiAPI from "./utils/fetchClarifaiAPI";
-import generateRandomImageUrl from "./utils/generateRandomImageUrl";
+import fetchColors from "./utils/fetchColors";
+import { generateRandomImageUrl, canLoadImage } from "./utils/utils";
+
+const IMAGE_WIDTH = 960;
+const IMAGE_HEIGHT = 540;
+const UPLOAD_MAX_NUMBER = 1;
 
 function Form() {
 	const [colors, setColors] = useState();
 	const [inputURL, setInputUrl] = useState();
-	const [imageURL, setImageUrl] = useState(generateRandomImageUrl);
-
-	const [imageLoading, setImageLoading] = useState(true);
+	const [imageType, setImageType] = useState();
+	const [imagePayload, setImagePayload] = useState();
+	const [uploadedImage, setUploadedImage] = useState([]);
+	const [imageLoading, setImageLoading] = useState(false);
 	const [colorsLoading, setColorsLoading] = useState(false);
 
-	const handleSubmit = (event) => {
-		event.preventDefault();
-
-		if (inputURL === imageURL) return;
-
+	const reset = () => {
+		setColors();
+		setInputUrl("");
+		setImagePayload();
 		setImageLoading(true);
-
-		const canLoadImage = (url) => {
-			return new Promise((resolve, reject) => {
-				const img = new Image();
-				img.src = url;
-				img.onload = () => resolve(true);
-				img.onerror = () => resolve(false);
-			});
-		};
-
-		canLoadImage(inputURL).then((result) => {
-			if (result) {
-				setImageLoading(false);
-				setImageUrl(inputURL);
-			} else {
-				setImageLoading(false);
-				alert("Please enter a valid URL");
-			}
-		});
 	};
 
-	const randomPhoto = (event) => {
-		event.preventDefault();
-		setInputUrl("");
-		setImageLoading(true);
-		setImageUrl(generateRandomImageUrl);
-		setColors();
+	const handleSubmit = (action) => {
+		console.log("Function parameters:", arguments);
+		reset();
+		switch (action) {
+			case "URL":
+				canLoadImage(inputURL).then((result) => {
+					if (result) {
+						setImageLoading(false);
+						setImageType("url");
+						setImagePayload(inputURL);
+					} else {
+						setImageLoading(false);
+						alert("Please enter a valid URL");
+					}
+				});
+				break;
+			case "RANDOM":
+				setImageType("url");
+				setImagePayload(generateRandomImageUrl(IMAGE_WIDTH, IMAGE_HEIGHT));
+				break;
+			// WIP
+			case "UPLOAD":
+				onImageUploadChange();
+			default:
+				break;
+		}
 	};
 
 	const handleImageLoad = () => {
 		setImageLoading(false);
 		setColorsLoading(true);
-		// Improve this
-		(async function fetchColors() {
-			const results = await fetchClarifaiAPI(imageURL);
+		// Improve this (revisit logic)
+		(async () => {
+			const results = await fetchColors(imageType, imagePayload);
 			setColors(results.outputs[0].data.colors);
 			setColorsLoading(false);
 		})();
 	};
 
-	const [uploadedImage, setUploadedImage] = useState([]);
-	const onChange = (imageList, addUpdateIndex) => {
-		setImageLoading(true);
+	const onImageUploadChange = (imageList) => {
+		reset();
+		setImageType("base64");
 		setUploadedImage(imageList);
-		setImageUrl(imageList[0].data_url);
+		setImagePayload(imageList[0].data_url);
 	};
 
 	return (
 		<>
-			<h2 style={{ marginBottom: "20px" }}>Paste your photo URL or upload your own</h2>
-			<form onSubmit={handleSubmit}>
+			<h2 style={{ marginBottom: "20px", textAlign: "center" }}>Paste your photo URL or upload your own</h2>
+			<form>
 				<input
 					type="url"
 					value={inputURL}
@@ -80,24 +85,25 @@ function Form() {
 					style={{ marginBottom: "20px" }}
 					required
 				/>
-				<button type="submit">Submit</button>
-				<button onClick={(event) => randomPhoto(event)}>Random Photo</button>
+				<button onClick={() => handleSubmit("URL")}>Submit</button>
+				<button onClick={() => handleSubmit("RANDOM")}>Random Photo</button>
 			</form>
 			<ImageUploading
 				value={uploadedImage}
-				onChange={onChange}
-				maxNumber={1}
+				// Use the handleSubmit function to upload the image (WIP)
+				onChange={onImageUploadChange}
+				maxNumber={UPLOAD_MAX_NUMBER}
 				dataURLKey="data_url"
 				acceptType={["jpg", "png", "gif"]}
 			>
-				{({ imageList, onImageUpload, onImageUpdate, onImageRemove, isDragging, dragProps, errors }) => (
+				{({ imageList, onImageUpdate, isDragging, dragProps, errors }) => (
 					<div className="upload__image-wrapper">
-						<button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpload} {...dragProps}>
+						<button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpdate} {...dragProps}>
 							Click or Drop here
 						</button>
 						{errors && (
 							<div>
-								{errors.maxNumber && <span>Number of selected images exceed maxNumber</span>}
+								{errors.maxNumber && <span>Number of selected images exceed {UPLOAD_MAX_NUMBER}</span>}
 								{errors.acceptType && <span>Your selected file type is not allow</span>}
 								{errors.maxFileSize && <span>Selected file size exceed maxFileSize</span>}
 								{errors.resolution && <span>Selected file is not match your desired resolution</span>}
@@ -106,19 +112,22 @@ function Form() {
 					</div>
 				)}
 			</ImageUploading>
-
+			{imageLoading && <NextImage src={loader} alt="loader" width={100} height={100} style={{ marginTop: "200px" }} />}
 			<div className={style.imageContainer}>
-				{imageLoading && (
-					<NextImage src={loader} alt="loader" width={100} height={100} style={{ marginTop: "200px" }} />
-				)}
-				{imageURL && (
-					<NextImage src={imageURL} alt="NextImage" key={imageURL} onLoad={handleImageLoad} width={1200} height={630} />
+				{imagePayload && (
+					<NextImage
+						src={imagePayload}
+						alt="NextImage"
+						key={imagePayload}
+						onLoad={handleImageLoad}
+						width={IMAGE_WIDTH}
+						height={IMAGE_HEIGHT}
+					/>
 				)}
 			</div>
 			<div className={style.colorContainer}>
-				{colorsLoading && <NextImage src={loader} alt="loader" width={75} height={75} style={{ marginTop: "50px" }} />}
+				{colorsLoading && <NextImage src={loader} alt="loader" width={75} height={75} style={{ marginTop: "10px" }} />}
 				{colors &&
-					!colorsLoading &&
 					colors.map((color) => {
 						return (
 							<div className={style.color} key={color.raw_hex} style={{ backgroundColor: color.w3c.hex }}>
