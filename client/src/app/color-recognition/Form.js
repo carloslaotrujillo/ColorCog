@@ -3,41 +3,35 @@ import NextImage from "next/image";
 import React, { useState } from "react";
 import style from "./Form.module.css";
 import loader from "../assets/loader.gif";
-import ImageUploading from "react-images-uploading";
 
-import fetchColors from "./utils/fetchColors";
-import { generateRandomImageUrl, canLoadImage } from "./utils/utils";
+import { fetchColors, generateRandomImageUrl, canLoadImage, handleFileDrop, handleFileSelect } from "./utils/utils";
 
 const IMAGE_WIDTH = 960;
 const IMAGE_HEIGHT = 540;
-const UPLOAD_MAX_NUMBER = 1;
 
 function Form() {
 	const [colors, setColors] = useState();
-	const [inputURL, setInputUrl] = useState();
+	const [inputUrl, setInputUrl] = useState();
+	const [imageSrc, setImageSrc] = useState();
 	const [imageType, setImageType] = useState();
-	const [imagePayload, setImagePayload] = useState();
-	const [uploadedImage, setUploadedImage] = useState([]);
 	const [imageLoading, setImageLoading] = useState(false);
 	const [colorsLoading, setColorsLoading] = useState(false);
 
-	const reset = () => {
-		setColors();
-		setInputUrl("");
-		setImagePayload();
-		setImageLoading(true);
-	};
+	const handleSubmit = (action, event) => {
+		event.preventDefault();
 
-	const handleSubmit = (action) => {
-		console.log("Function parameters:", arguments);
-		reset();
+		setColors();
+		setInputUrl();
+		setImageSrc();
+		setImageLoading(true);
+
 		switch (action) {
 			case "URL":
-				canLoadImage(inputURL).then((result) => {
+				canLoadImage(inputUrl).then((result) => {
 					if (result) {
-						setImageLoading(false);
 						setImageType("url");
-						setImagePayload(inputURL);
+						setImageSrc(inputUrl);
+						setImageLoading(false);
 					} else {
 						setImageLoading(false);
 						alert("Please enter a valid URL");
@@ -46,81 +40,75 @@ function Form() {
 				break;
 			case "RANDOM":
 				setImageType("url");
-				setImagePayload(generateRandomImageUrl(IMAGE_WIDTH, IMAGE_HEIGHT));
+				setImageSrc(generateRandomImageUrl(IMAGE_WIDTH, IMAGE_HEIGHT));
+				break;
+			case "UPLOAD_FILE":
+				const fileUpload = event.target.files[0];
+				handleFileSubmit(fileUpload);
 				break;
 			// WIP
-			case "UPLOAD":
-				onImageUploadChange();
+			case "UPLOAD_DROP":
+				const fileDrop = event.dataTransfer.files[0];
+				handleFileSubmit(fileDrop);
+				break;
 			default:
 				break;
 		}
 	};
 
-	const handleImageLoad = () => {
+	const loadColors = () => {
 		setImageLoading(false);
 		setColorsLoading(true);
-		// Improve this (revisit logic)
 		(async () => {
-			const results = await fetchColors(imageType, imagePayload);
+			const results = await fetchColors(imageType, imageSrc);
 			setColors(results.outputs[0].data.colors);
 			setColorsLoading(false);
 		})();
 	};
 
-	const onImageUploadChange = (imageList) => {
-		reset();
-		setImageType("base64");
-		setUploadedImage(imageList);
-		setImagePayload(imageList[0].data_url);
+	const handleFileSubmit = (file) => {
+		if (file) {
+			setImageType("base64");
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = (event) => {
+				setImageSrc(event.target.result);
+			};
+		}
 	};
 
 	return (
 		<>
 			<h2 style={{ marginBottom: "20px", textAlign: "center" }}>Paste your photo URL or upload your own</h2>
-			<form>
-				<input
-					type="url"
-					value={inputURL}
-					onChange={(event) => setInputUrl(event.target.value)}
-					style={{ marginBottom: "20px" }}
-					required
-				/>
-				<button onClick={() => handleSubmit("URL")}>Submit</button>
-				<button onClick={() => handleSubmit("RANDOM")}>Random Photo</button>
-			</form>
-			<ImageUploading
-				value={uploadedImage}
-				// Use the handleSubmit function to upload the image (WIP)
-				// On Drag gives error when a img is already uploaded by drag at first
-				onChange={onImageUploadChange}
-				maxNumber={UPLOAD_MAX_NUMBER}
-				dataURLKey="data_url"
-				acceptType={["jpg", "png", "gif"]}
-			>
-				{({ imageList, onImageUpdate, isDragging, dragProps, errors }) => (
-					<div className="upload__image-wrapper">
-						<button style={isDragging ? { color: "red" } : undefined} onClick={onImageUpdate} {...dragProps}>
-							Click or Drop here
-						</button>
-						{errors && (
-							<div>
-								{errors.maxNumber && <span>Number of selected images exceed {UPLOAD_MAX_NUMBER}</span>}
-								{errors.acceptType && <span>Your selected file type is not allow</span>}
-								{errors.maxFileSize && <span>Selected file size exceed maxFileSize</span>}
-								{errors.resolution && <span>Selected file is not match your desired resolution</span>}
-							</div>
-						)}
+			<div className={style.formContainer}>
+				<form>
+					<input
+						type="url"
+						value={inputUrl}
+						onChange={(event) => setInputUrl(event.target.value)}
+						style={{ marginBottom: "20px" }}
+					/>
+					<button onClick={(event) => handleSubmit("URL", event)}>Submit</button>
+					<button onClick={(event) => handleSubmit("RANDOM", event)}>Random Photo</button>
+					<div>
+						<input type="file" onChange={(event) => handleSubmit("UPLOAD_FILE", event)} />
 					</div>
-				)}
-			</ImageUploading>
+					<div
+						onDrop={(event) => {
+							handleSubmit("UPLOAD_DROP", event);
+						}}
+						onDragOver={(event) => event.preventDefault()}
+					></div>
+				</form>
+			</div>
 			{imageLoading && <NextImage src={loader} alt="loader" width={100} height={100} style={{ marginTop: "200px" }} />}
 			<div className={style.imageContainer}>
-				{imagePayload && (
+				{imageSrc && (
 					<NextImage
-						src={imagePayload}
+						src={imageSrc}
 						alt="NextImage"
-						key={imagePayload}
-						onLoad={handleImageLoad}
+						key={imageSrc}
+						onLoad={loadColors}
 						width={IMAGE_WIDTH}
 						height={IMAGE_HEIGHT}
 					/>
