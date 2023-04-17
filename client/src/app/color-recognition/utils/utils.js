@@ -60,3 +60,15 @@ export const canLoadImage = (url) => {
 		img.onerror = () => resolve(false);
 	});
 };
+
+export const DataList = ({ width, height, id }) => {
+	return (
+		<datalist id={id}>
+			<option value={`https://dummyimage.com/${width}x${height}/ff0000/000000&text=+`} label="Red"></option>
+			<option value={`https://dummyimage.com/${width}x${height}/00ff00/000000&text=+`} label="Green"></option>
+			<option value={`https://dummyimage.com/${width}x${height}/0000ff/000000&text=+`} label="Blue"></option>
+			<option value={`https://dummyimage.com/${width}x${height}/ffff00/000000&text=+`} label="Yellow"></option>
+			<option value={`https://dummyimage.com/${width}x${height}/ff00ff/000000&text=+`} label="Magenta"></option>
+		</datalist>
+	);
+};

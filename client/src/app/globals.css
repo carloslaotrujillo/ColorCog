@@ -1,14 +1,21 @@
 :root {
 	--max-width: 1100px;
 	--border-radius: 12px;
-	--font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-		"Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+	--font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+		"Ubuntu Monospace", "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
 	--foreground-rgb: 0, 0, 0;
 	--background-start-rgb: 214, 219, 220;
 	--background-end-rgb: 255, 255, 255;
 
-	--primary-glow: conic-gradient(from 180deg at 50% 50%, #16abff33 0deg, #0885ff33 55deg, #54d6ff33 120deg, #0071ff33 160deg, transparent 360deg);
+	--primary-glow: conic-gradient(
+		from 180deg at 50% 50%,
+		#16abff33 0deg,
+		#0885ff33 55deg,
+		#54d6ff33 120deg,
+		#0071ff33 160deg,
+		transparent 360deg
+	);
 	--secondary-glow: radial-gradient(rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 
 	--tile-start-rgb: 239, 245, 249;
@@ -42,9 +49,10 @@
 }
 
 * {
-	box-sizing: border-box;
-	padding: 0;
 	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: Arial, Helvetica, sans-serif;
 }
 
 html,
@@ -60,10 +68,10 @@ body {
 
 nav {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	flex-direction: row;
 	flex-wrap: wrap;
+	align-items: center;
+	flex-direction: row;
+	justify-content: center;
 	border-bottom: 1px solid #ccc;
 }
 
@@ -84,6 +92,7 @@ a {
 	text-decoration: none;
 }
 
+label,
 button {
 	border: 0;
 	margin: 0.5rem;
