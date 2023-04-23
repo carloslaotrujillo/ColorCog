@@ -1,8 +1,8 @@
 // Move this to a .env file
-const PAT = process.env.PAT;
-const APP_ID = process.env.APP_ID;
-const USER_ID = process.env.USER_ID;
-const MODEL_ID = process.env.MODEL_ID;
+const PAT = process.env.NEXT_PUBLIC_PAT;
+const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
+const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+const MODEL_ID = process.env.NEXT_PUBLIC_MODEL_ID;
 
 const fetchOptions = (type, payload) => {
 	if (type === "base64") {

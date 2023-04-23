@@ -96,7 +96,7 @@ function ColorRecognition() {
 						<button onClick={(event) => handleSubmit("RANDOM", event)}>Random Photo</button>
 						<div className={style.uploadContainer}>
 							<input type="file" id="file-input" onChange={(event) => handleSubmit("UPLOAD_FILE", event)} />
-							<label for="file-input">Choose a file</label>
+							<label htmlFor="file-input">Choose a file</label>
 						</div>
 					</div>
 					<div
