@@ -33,10 +33,10 @@
 	width: 100%;
 	flex-wrap: wrap;
 	display: flex;
+	margin-bottom: 20px;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	margin-bottom: 20px;
 }
 
 .uploadContainer input {
@@ -54,6 +54,7 @@
 	height: 100px;
 	text-align: center;
 	align-items: center;
+	border-radius: 0.25rem;
 	flex-direction: column;
 	justify-content: center;
 	border: 1px solid #ccc;

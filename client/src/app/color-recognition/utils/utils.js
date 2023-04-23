@@ -1,3 +1,4 @@
+const MAX = 1_000_000;
 const PAT = process.env.NEXT_PUBLIC_PAT;
 const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
 const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
@@ -46,7 +47,6 @@ export async function fetchColors(type, payload) {
 }
 
 export const generateRandomImageUrl = (width, height) => {
-	const MAX = 1_000_000;
 	const baseImageUrl = `https://loremflickr.com/${width}/${height}/landscape?lock=`;
 	return baseImageUrl + Math.floor(Math.random() * MAX).toString();
 };
