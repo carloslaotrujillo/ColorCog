@@ -1,8 +1,8 @@
 // Move this to a .env file
-const USER_ID = "krloslao90";
-const APP_ID = "color-precog";
-const MODEL_ID = "color-recognition";
-const PAT = "3f8003a72aee4c9cb2c46af28832f94d";
+const PAT = process.env.PAT;
+const APP_ID = process.env.APP_ID;
+const USER_ID = process.env.USER_ID;
+const MODEL_ID = process.env.MODEL_ID;
 
 const fetchOptions = (type, payload) => {
 	if (type === "base64") {
