@@ -1,4 +1,3 @@
-// Move this to a .env file
 const PAT = process.env.NEXT_PUBLIC_PAT;
 const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
 const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
