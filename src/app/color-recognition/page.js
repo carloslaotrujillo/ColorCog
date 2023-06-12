@@ -4,7 +4,7 @@ import style from "./style.module.css";
 import React, { useState } from "react";
 import Loader from "../assets/loader.gif";
 import UploadIcon from "../assets/upload.png";
-import { fetchColors, generateRandomImageUrl, canLoadImage, DataList } from "./utils/utils";
+import { fetchUrlColors, fetchFileColors, generateRandomImageUrl, canLoadImage, DataList } from "./utils/utils";
 
 const IMAGE_WIDTH = 800;
 const IMAGE_HEIGHT = 480;
@@ -13,6 +13,7 @@ function ColorRecognition() {
 	const [colors, setColors] = useState([]);
 	const [inputUrl, setInputUrl] = useState("");
 	const [imageSrc, setImageSrc] = useState("");
+	const [fileSrc, setFileSrc] = useState("");
 	const [imageType, setImageType] = useState("");
 	const [dragover, setDragover] = useState(false);
 	const [imageLoading, setImageLoading] = useState(false);
@@ -59,14 +60,29 @@ function ColorRecognition() {
 		setImageLoading(false);
 		setColorsLoading(true);
 		(async () => {
-			const results = await fetchColors(imageType, imageSrc);
+			const results = await fetchColors();
 			setColors(results.outputs[0].data.colors);
 			setColorsLoading(false);
 		})();
 	};
 
+	const fetchColors = async () => {
+		let data;
+		switch (imageType) {
+			case "url":
+				data = await fetchUrlColors(imageSrc);
+				return data;
+			case "base64":
+				data = await fetchFileColors(fileSrc);
+				return data;
+			default:
+				break;
+		}
+	};
+
 	const handleFileSubmit = (file) => {
 		if (file) {
+			setFileSrc(file);
 			setImageType("base64");
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
@@ -75,6 +91,11 @@ function ColorRecognition() {
 				setImageLoading(false);
 			};
 		}
+	};
+
+	const addColor = (color) => {
+		console.log(color.w3c.name);
+		console.log(color.w3c.hex);
 	};
 
 	return (
@@ -95,7 +116,12 @@ function ColorRecognition() {
 						<button onClick={(event) => handleSubmit("URL", event)}>Submit</button>
 						<button onClick={(event) => handleSubmit("RANDOM", event)}>Random Photo</button>
 						<div className={style.uploadContainer}>
-							<input type="file" id="file-input" onChange={(event) => handleSubmit("UPLOAD_FILE", event)} />
+							<input
+								type="file"
+								id="file-input"
+								name="image"
+								onChange={(event) => handleSubmit("UPLOAD_FILE", event)}
+							/>
 							<label htmlFor="file-input">Choose a file</label>
 						</div>
 					</div>
@@ -125,7 +151,7 @@ function ColorRecognition() {
 				{imageSrc && (
 					<NextImage
 						src={imageSrc}
-						alt="NextImage"
+						alt="Image"
 						key={imageSrc}
 						onLoad={loadColors}
 						width={IMAGE_WIDTH}
@@ -140,10 +166,15 @@ function ColorRecognition() {
 				{colors &&
 					colors.map((color) => {
 						return (
-							<div className={style.Color} key={color.raw_hex} style={{ backgroundColor: color.w3c.hex }}>
+							<button
+								className={style.Color}
+								key={color.raw_hex}
+								style={{ backgroundColor: color.w3c.hex }}
+								onClick={() => addColor(color)}
+							>
 								<p>{color.w3c.name}</p>
 								<p>{color.w3c.hex}</p>
-							</div>
+							</button>
 						);
 					})}
 			</div>

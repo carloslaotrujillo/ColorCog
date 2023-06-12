@@ -1,50 +1,44 @@
 const MAX = 1_000_000;
-const PAT = process.env.NEXT_PUBLIC_PAT;
-const APP_ID = process.env.NEXT_PUBLIC_APP_ID;
-const USER_ID = process.env.NEXT_PUBLIC_USER_ID;
-const MODEL_ID = process.env.NEXT_PUBLIC_MODEL_ID;
 
-const fetchOptions = (type, payload) => {
-	if (type === "base64") {
-		payload = payload.split(",")[1];
-	}
-
-	const raw = JSON.stringify({
-		user_app_id: {
-			user_id: USER_ID,
-			app_id: APP_ID,
-		},
-		inputs: [
+export const fetchUrlColors = async (src) => {
+	try {
+		const response = await fetch(
+			process.env.NEXT_PUBLIC_SERVER_URL + process.env.NEXT_PUBLIC_API_VERSION + "/color/url",
 			{
-				data: {
-					image: {
-						[type]: payload,
-					},
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
 				},
-			},
-		],
-	});
-
-	const requestOptions = {
-		method: "POST",
-		headers: {
-			Accept: "application/json",
-			Authorization: "Key " + PAT,
-		},
-		body: raw,
-	};
-
-	return requestOptions;
+				body: JSON.stringify({
+					src: src,
+				}),
+			}
+		);
+		const result = await response.json();
+		return result;
+	} catch (error) {
+		console.log(error);
+	}
 };
 
-export async function fetchColors(type, payload) {
-	const response = await fetch(
-		"https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs",
-		fetchOptions(type, payload)
-	);
-	const result = await response.json();
-	return result;
-}
+export const fetchFileColors = async (src) => {
+	const formData = new FormData();
+	formData.append("image", src);
+
+	try {
+		const response = await fetch(
+			process.env.NEXT_PUBLIC_SERVER_URL + process.env.NEXT_PUBLIC_API_VERSION + "/color/file",
+			{
+				method: "POST",
+				body: formData,
+			}
+		);
+		const result = await response.json();
+		return result;
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 export const generateRandomImageUrl = (width, height) => {
 	const baseImageUrl = `https://loremflickr.com/${width}/${height}/landscape?lock=`;
