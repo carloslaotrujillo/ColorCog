@@ -12,6 +12,7 @@ export const fetchUrlColors = async (src) => {
 				body: JSON.stringify({
 					src: src,
 				}),
+				credentials: "include",
 			}
 		);
 		const result = await response.json();
@@ -31,6 +32,7 @@ export const fetchFileColors = async (src) => {
 			{
 				method: "POST",
 				body: formData,
+				credentials: "include",
 			}
 		);
 		const result = await response.json();

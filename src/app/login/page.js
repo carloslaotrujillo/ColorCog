@@ -15,11 +15,9 @@ function LogIn() {
 		e.preventDefault();
 		setIsLoading(true);
 		setFormControlDisable(true);
-
-		console.log(email);
-
+		
 		const response = await loginUser(email, password);
-
+		
 		if (response.status === 200) {
 			setIsLoading(false);
 			await swal({

@@ -1,6 +1,6 @@
 "use client";
 import swal from "sweetalert";
-import registerUser from "./utils";
+// import registerUser from "./utils";
 import React, { useState } from "react";
 import styles from "./style.module.css";
 import { Vortex } from "react-loader-spinner";
@@ -11,6 +11,22 @@ function SignUp() {
 	const [password, setPassword] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [formControlDisable, setFormControlDisable] = useState(false);
+
+	const registerUser = async (name, email, password) => {
+		try {
+			const response = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + "/register", {
+				method: "POST",
+				credentials: "include",
+				withCredentials: true,
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ name, email, password }),
+				redirect: "follow",
+			});
+			return response;
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -26,7 +42,7 @@ function SignUp() {
 				icon: "success",
 				button: "OK",
 			});
-			// location.href = "/";
+			location.href = "/";
 		} else {
 			const data = await response.json();
 			setIsLoading(false);
