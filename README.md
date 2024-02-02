@@ -1,1 +1,1 @@
-# color-precog
+# ColorCog
